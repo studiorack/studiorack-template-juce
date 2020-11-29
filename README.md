@@ -52,29 +52,32 @@ Depending on the the operating system you are on/building for, swap the generato
 
 Compile a development version of the plugin using:
 
-    cmake ./jucesdk \
+    cmake \
       -G "Xcode" \
       -DJUCE_BUILD_EXAMPLES=ON \
-      -DJUCE_BUILD_EXTRAS=ON \
+      -DJUCE_BUILD_EXTRAS=OFF \
+      -S ./jucesdk \
       -B ./build
     cmake --build ./build --config Debug --target AudioPluginExample
 
 View the built plugin files at:
 
-    ./build/examples/CMake/AudioPlugin/AudioPluginExample_artefacts/VST3
+    ./build/examples/CMake/AudioPlugin/AudioPluginExample_artefacts/Debug/VST3
 
 Build the final plugin binaries using:
 
-    cmake ./jucesdk \
+    cmake \
+      -G "Xcode" \
       -DJUCE_BUILD_EXAMPLES=ON \
-      -DJUCE_BUILD_EXTRAS=ON \
+      -DJUCE_BUILD_EXTRAS=OFF \
+      -S ./jucesdk \
       -B ./build
-    cmake --build ./build --config Release --target AudioPluginExample
+    cmake --build ./build --config Release
 
 
 Copy any additional files:
 
-    cp -v ./src/assets/* ./build/examples/CMake/AudioPlugin/AudioPluginExample_artefacts/VST3
+    cp -v ./src/assets/* ./build/examples/CMake/AudioPlugin/AudioPluginExample_artefacts/Debug/VST3
 
 For metadata generation as json use the studiorack-cli:
 
@@ -86,7 +89,7 @@ Validate your plugin:
 
 Convert and enrich validator report metadata into json:
 
-    studiorack validate "./build/VST3/Release/**/*.{vst,vst3}" --json
+    studiorack validate "./build/examples/**/*.{vst,vst3}" --json
 
 
 ## Build (automatic)
