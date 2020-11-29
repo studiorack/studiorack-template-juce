@@ -36,7 +36,7 @@ jobs:
           - os: ubuntu-latest
             name: linux
             generator: Unix Makefiles
-            path: ./build/examples/CMake/AudioPlugin/AudioPluginExample_artefacts/VST3
+            path: ./build/examples/CMake/AudioPlugin/AudioPluginExample_artefacts/Release/VST3
           - os: macos-latest
             name: mac
             generator: Xcode
@@ -73,6 +73,7 @@ jobs:
         run: |
           cmake \
             -G "${{ matrix.generator }}" \
+            -DCMAKE_BUILD_TYPE=Release \
             -DJUCE_BUILD_EXAMPLES=ON \
             -DJUCE_BUILD_EXTRAS=OFF \
             -S ./jucesdk \

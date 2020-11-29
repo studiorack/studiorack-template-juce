@@ -54,6 +54,7 @@ Compile a development version of the plugin using:
 
     cmake \
       -G "Xcode" \
+      -DCMAKE_BUILD_TYPE=Debug \
       -DJUCE_BUILD_EXAMPLES=ON \
       -DJUCE_BUILD_EXTRAS=OFF \
       -S ./jucesdk \
@@ -68,6 +69,7 @@ Build the final plugin binaries using:
 
     cmake \
       -G "Xcode" \
+      -DCMAKE_BUILD_TYPE=Release \
       -DJUCE_BUILD_EXAMPLES=ON \
       -DJUCE_BUILD_EXTRAS=OFF \
       -S ./jucesdk \
