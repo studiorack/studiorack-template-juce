@@ -36,12 +36,15 @@ jobs:
           - os: ubuntu-latest
             name: linux
             generator: Unix Makefiles
+            path: ./build/examples/CMake/AudioPlugin/AudioPluginExample_artefacts/VST3
           - os: macos-latest
             name: mac
             generator: Xcode
+            path: ./build/examples/CMake/AudioPlugin/AudioPluginExample_artefacts/Release/VST3
           - os: windows-latest
             name: win
             generator: Visual Studio 16 2019
+            path: ./build/examples/CMake/AudioPlugin/AudioPluginExample_artefacts/Release/VST3
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -85,8 +88,8 @@ jobs:
         shell: bash
         run: |
           npm install @studiorack/cli -g
-          cp -v ./src/assets/* ./build/examples/CMake/AudioPlugin/AudioPluginExample_artefacts/Release/VST3
-          studiorack validate "./build/examples/CMake/AudioPlugin/AudioPluginExample_artefacts/Release/VST3/**/*.{vst,vst3}" --json --txt --zip --summary
+          cp -v ./src/assets/* ${{ matrix.path }}
+          studiorack validate "${{ matrix.path }}/**/*.{vst,vst3}" --json --txt --zip --summary
 
       - name: Upload
         uses: actions/github-script@v3
@@ -96,32 +99,32 @@ jobs:
             const path = require('path');
             const fs = require('fs');
             const release_id = '${{ needs.create_release.outputs.id }}';
-            for (let file of await fs.readdirSync('./build/examples/CMake/AudioPlugin/AudioPluginExample_artefacts/Release/VST3')) {
+            for (let file of await fs.readdirSync('${{ matrix.path }}')) {
               if (path.extname(file) === '.zip') {
-                console.log('upload zip', `./build/examples/CMake/AudioPlugin/AudioPluginExample_artefacts/Release/VST3/${file}`);
+                console.log('upload zip', `${{ matrix.path }}/${file}`);
                 await github.repos.uploadReleaseAsset({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
                   release_id: release_id,
                   name: `${path.basename(file, path.extname(file))}-${{ matrix.name }}.zip`,
-                  data: await fs.readFileSync(`./build/examples/CMake/AudioPlugin/AudioPluginExample_artefacts/Release/VST3/${file}`)
+                  data: await fs.readFileSync(`${{ matrix.path }}/${file}`)
                 });
                 if ("${{ matrix.os }}" == 'windows-latest') {
-                  console.log('upload png', `./build/examples/CMake/AudioPlugin/AudioPluginExample_artefacts/Release/VST3/${path.basename(file, path.extname(file))}.png`);
+                  console.log('upload png', `${{ matrix.path }}/${path.basename(file, path.extname(file))}.png`);
                   await github.repos.uploadReleaseAsset({
                     owner: context.repo.owner,
                     repo: context.repo.repo,
                     release_id: release_id,
                     name: `${path.basename(file, path.extname(file))}.png`,
-                    data: await fs.readFileSync(`./build/examples/CMake/AudioPlugin/AudioPluginExample_artefacts/Release/VST3/${path.basename(file, path.extname(file))}.png`)
+                    data: await fs.readFileSync(`${{ matrix.path }}/${path.basename(file, path.extname(file))}.png`)
                   });
-                  console.log('upload wav', `./build/examples/CMake/AudioPlugin/AudioPluginExample_artefacts/Release/VST3/${path.basename(file, path.extname(file))}.wav`);
+                  console.log('upload wav', `${{ matrix.path }}/${path.basename(file, path.extname(file))}.wav`);
                   await github.repos.uploadReleaseAsset({
                     owner: context.repo.owner,
                     repo: context.repo.repo,
                     release_id: release_id,
                     name: `${path.basename(file, path.extname(file))}.wav`,
-                    data: await fs.readFileSync(`./build/examples/CMake/AudioPlugin/AudioPluginExample_artefacts/Release/VST3/${path.basename(file, path.extname(file))}.wav`)
+                    data: await fs.readFileSync(`${{ matrix.path }}/${path.basename(file, path.extname(file))}.wav`)
                   });
                 }
               }
@@ -134,7 +137,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.create_release.outputs.upload_url }}
-          asset_path: ./build/examples/CMake/AudioPlugin/AudioPluginExample_artefacts/Release/VST3/plugins.json
+          asset_path: ${{ matrix.path }}/plugins.json
           asset_name: plugins.json
           asset_content_type: application/json
 
