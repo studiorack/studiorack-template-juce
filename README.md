@@ -58,7 +58,7 @@ Compile a development version of the plugin using:
       -DJUCE_BUILD_EXTRAS=OFF \
       -S ./jucesdk \
       -B ./build
-    cmake --build ./build --config Debug --target AudioPluginExample
+    cmake --build ./build --config Debug --target AudioPluginExample_All
 
 View the built plugin files at:
 
@@ -72,7 +72,7 @@ Build the final plugin binaries using:
       -DJUCE_BUILD_EXTRAS=OFF \
       -S ./jucesdk \
       -B ./build
-    cmake --build ./build --config Release
+    cmake --build ./build --config Release --target AudioPluginExample_All
 
 
 Copy any additional files:
