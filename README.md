@@ -77,7 +77,7 @@ Build the final plugin binaries using:
 
 Copy any additional files:
 
-    cp -v ./src/assets/* ./build/examples/CMake/AudioPlugin/AudioPluginExample_artefacts/Debug/VST3
+    cp -v ./src/assets/* ./build/examples/CMake/AudioPlugin/AudioPluginExample_artefacts/Release/VST3
 
 For metadata generation as json use the studiorack-cli:
 
