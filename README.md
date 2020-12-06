@@ -76,6 +76,9 @@ Build the final plugin binaries using:
       -B ./build
     cmake --build ./build --config Release --target AudioPluginExample_All
 
+Rename file if it contains invalid characters/spaces:
+
+    mv "./build/examples/CMake/AudioPlugin/AudioPluginExample_artefacts/Release/VST3/Audio Plugin Example.vst3" ./build/examples/CMake/AudioPlugin/AudioPluginExample_artefacts/Release/VST3/AudioPluginExample.vst3
 
 Copy any additional files:
 
