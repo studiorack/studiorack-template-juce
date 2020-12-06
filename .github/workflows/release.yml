@@ -44,7 +44,7 @@ jobs:
           - os: windows-latest
             name: win
             generator: Visual Studio 16 2019
-            path: ./build/examples/CMake/AudioPlugin/AudioPluginExample_artefacts/Release/VST3
+            path: ./build/examples/CMake/AudioPlugin/AudioPluginExample_artefacts/Release/VST3/Audio Plugin Example.vst3/Contents/x86_64-win/
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -90,7 +90,7 @@ jobs:
         run: |
           npm install @studiorack/cli -g
           cp -v ./src/assets/* ${{ matrix.path }}
-          mv "./build/examples/CMake/AudioPlugin/AudioPluginExample_artefacts/Release/VST3/Audio Plugin Example.vst3" ./build/examples/CMake/AudioPlugin/AudioPluginExample_artefacts/Release/VST3/AudioPluginExample.vst3
+          mv "${{ matrix.path }}/Audio Plugin Example.vst3" "${{ matrix.path }}/AudioPluginExample.vst3"
           studiorack validate "${{ matrix.path }}/**/*.{vst,vst3}" --json --txt --zip --summary
 
       - name: Upload
