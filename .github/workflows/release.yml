@@ -44,7 +44,7 @@ jobs:
           - os: windows-latest
             name: win
             generator: Visual Studio 16 2019
-            path: ./build/examples/CMake/AudioPlugin/AudioPluginExample_artefacts/Release/VST3/Audio Plugin Example.vst3/Contents/x86_64-win/
+            path: ./build/examples/CMake/AudioPlugin/AudioPluginExample_artefacts/Release/VST3/Audio Plugin Example.vst3/Contents/x86_64-win
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
