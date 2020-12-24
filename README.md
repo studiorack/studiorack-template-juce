@@ -78,7 +78,7 @@ Build the final plugin binaries using:
 
 Rename file if it contains invalid characters/spaces:
 
-    mv "./build/examples/CMake/AudioPlugin/AudioPluginExample_artefacts/Release/VST3/Audio Plugin Example.vst3" ./build/examples/CMake/AudioPlugin/AudioPluginExample_artefacts/Release/VST3/AudioPluginExample.vst3
+    mv "./build/examples/CMake/AudioPlugin/AudioPluginExample_artefacts/Release/VST3/Audio Plugin Example.vst3" ./build/examples/CMake/AudioPlugin/AudioPluginExample_artefacts/Release/VST3/audio-plugin-example.vst3
 
 Copy any additional files:
 

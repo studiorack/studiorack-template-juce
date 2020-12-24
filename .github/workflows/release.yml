@@ -93,7 +93,7 @@ jobs:
         run: |
           npm install @studiorack/cli -g
           cp -v ./src/assets/* "${{ matrix.path }}"
-          mv "${{ matrix.path }}/Audio Plugin Example.vst3" "${{ matrix.path }}/AudioPluginExample.vst3"
+          mv "${{ matrix.path }}/Audio Plugin Example.vst3" "${{ matrix.path }}/audio-plugin-example.vst3"
           studiorack validate "${{ matrix.path }}/**/*.{vst,vst3}" --files --json --txt --zip --summary
 
       - name: Upload
