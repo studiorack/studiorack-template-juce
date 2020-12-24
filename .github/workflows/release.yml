@@ -83,6 +83,11 @@ jobs:
             -B ./build
           cmake --build ./build --config Release --target AudioPluginExample_All
 
+      - name: Install node
+        uses: actions/setup-node@v1
+        with:
+          node-version: '14'
+
       - name: Metadata
         shell: bash
         run: |
