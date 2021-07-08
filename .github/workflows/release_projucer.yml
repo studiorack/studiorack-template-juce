@@ -36,23 +36,23 @@ jobs:
           - os: ubuntu-latest
             name: linux
             generator: Unix Makefiles
-            path: ./src/AudioPluginDemo/Builds/LinuxMakefile/build/Release
-            projucer_source: ./jucesdk/extras/Projucer/Builds/LinuxMakefile
-            projucer_bin: ./jucesdk/extras/Projucer/Builds/LinuxMakefile/build/Projucer
+            path: ${{ github.workspace }}/src/AudioPluginDemo/Builds/LinuxMakefile/build/Release
+            projucer_source: ${{ github.workspace }}/jucesdk/extras/Projucer/Builds/LinuxMakefile
+            projucer_bin: ${{ github.workspace }}/jucesdk/extras/Projucer/Builds/LinuxMakefile/build/Projucer
             projucer_type: linux
           - os: macos-latest
             name: mac
             generator: Xcode
-            path: ./src/AudioPluginDemo/Builds/MacOSX/build/Release
-            projucer_source: ./jucesdk/extras/Projucer/Builds/MacOSX
-            projucer_bin: ./jucesdk/extras/Projucer/Builds/MacOSX/build/Debug/Projucer.app/Contents/MacOS/Projucer
+            path: ${{ github.workspace }}/src/AudioPluginDemo/Builds/MacOSX/build/Release
+            projucer_source: ${{ github.workspace }}/jucesdk/extras/Projucer/Builds/MacOSX
+            projucer_bin: ${{ github.workspace }}/jucesdk/extras/Projucer/Builds/MacOSX/build/Debug/Projucer.app/Contents/MacOS/Projucer
             projucer_type: osx
           - os: windows-latest
             name: win
             generator: Visual Studio 16 2019
-            path: ./src/AudioPluginDemo/Builds/VisualStudio2017/build/Release
-            projucer_source: ./jucesdk/extras/Projucer/Builds/VisualStudio2017
-            projucer_bin: ./jucesdk/extras/Projucer/Builds/VisualStudio2017/x64/Debug/App/Projucer.exe
+            path: ${{ github.workspace }}/src/AudioPluginDemo/Builds/VisualStudio2017/build/Release
+            projucer_source: ${{ github.workspace }}/jucesdk/extras/Projucer/Builds/VisualStudio2017
+            projucer_bin: ${{ github.workspace }}/jucesdk/extras/Projucer/Builds/VisualStudio2017/x64/Debug/App/Projucer.exe
             projucer_type: windows
     steps:
       - name: Checkout code (Projucer)
@@ -89,7 +89,7 @@ jobs:
 
       - name: Build (Projucer)
         shell: bash
-        working-directory: ./src/AudioPluginDemo
+        working-directory: ${{ github.workspace }}/src/AudioPluginDemo
         run: |
           ${{ matrix.projucer_bin }} --set-global-search-path ${{ matrix.projucer_type }} defaultJuceModulePath ${{ github.workspace }}/jucesdk/modules
           ${{ matrix.projucer_bin }} --resave AudioPluginDemo.jucer
@@ -103,7 +103,7 @@ jobs:
         shell: bash
         run: |
           npm install @studiorack/cli -g
-          cp -v ./src/assets/* "${{ matrix.path }}"
+          cp -v ${{ github.workspace }}/src/assets/* "${{ matrix.path }}"
           mv "${{ matrix.path }}/AudioPluginDemo.vst3" "${{ matrix.path }}/audio-plugin-demo.vst3"
           studiorack validate "${{ matrix.path }}/**/*.{vst,vst3}" --files --json --txt --zip --summary
 
