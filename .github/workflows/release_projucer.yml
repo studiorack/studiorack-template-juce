@@ -36,23 +36,26 @@ jobs:
           - os: ubuntu-latest
             name: linux
             generator: Unix Makefiles
+            source: ./src/AudioPluginDemo/Builds/LinuxMakefile
             path: ./src/AudioPluginDemo/Builds/LinuxMakefile/build/Release
             projucer_source: ./jucesdk/extras/Projucer/Builds/LinuxMakefile
-            projucer_bin: ./jucesdk/extras/Projucer/Builds/LinuxMakefile/build/Projucer
+            projucer_bin: ../../jucesdk/extras/Projucer/Builds/LinuxMakefile/build/Projucer
             projucer_type: linux
           - os: macos-latest
             name: mac
             generator: Xcode
+            source: ./src/AudioPluginDemo/Builds/MacOSX
             path: ./src/AudioPluginDemo/Builds/MacOSX/build/Release
             projucer_source: ./jucesdk/extras/Projucer/Builds/MacOSX
-            projucer_bin: ./jucesdk/extras/Projucer/Builds/MacOSX/build/Debug/Projucer.app/Contents/MacOS/Projucer
+            projucer_bin: ../../jucesdk/extras/Projucer/Builds/MacOSX/build/Debug/Projucer.app/Contents/MacOS/Projucer
             projucer_type: osx
           - os: windows-latest
             name: win
             generator: Visual Studio 16 2019
+            source: ./src/AudioPluginDemo/Builds/VisualStudio2017
             path: ./src/AudioPluginDemo/Builds/VisualStudio2017/build/Release
             projucer_source: ./jucesdk/extras/Projucer/Builds/VisualStudio2017
-            projucer_bin: ./jucesdk/extras/Projucer/Builds/VisualStudio2017/x64/Debug/App/Projucer.exe
+            projucer_bin: ../../jucesdk/extras/Projucer/Builds/VisualStudio2017/x64/Debug/App/Projucer.exe
             projucer_type: windows
     steps:
       - name: Checkout code (Projucer)
@@ -75,7 +78,7 @@ jobs:
         if: matrix.os == 'macos-latest'
         shell: bash
         working-directory: ${{ matrix.projucer_source }}
-        run: xcodebuild -project Projucer.xcodeproj -jobs 4 | xcpretty
+        run: xcodebuild ARCHS=x86_64 -project Projucer.xcodeproj -jobs 4
 
       - name: Install Windows dependencies (Projucer)
         if: matrix.os == 'windows-latest'
@@ -91,8 +94,26 @@ jobs:
         shell: bash
         working-directory: ./src/AudioPluginDemo
         run: |
-          ${{ matrix.projucer_bin }} --set-global-search-path ${{ matrix.projucer_type }} defaultJuceModulePath ./jucesdk/modules
+          ${{ matrix.projucer_bin }} --set-global-search-path ${{ matrix.projucer_type }} defaultJuceModulePath ../../jucesdk/modules
           ${{ matrix.projucer_bin }} --resave AudioPluginDemo.jucer
+
+      - name: Build Linux plugin (Projucer)
+        if: matrix.os == 'ubuntu-latest'
+        shell: bash
+        working-directory: ${{ matrix.source }}
+        run: make -j4 CONFIG=Release
+
+      - name: Build macOS plugin (Projucer)
+        if: matrix.os == 'macos-latest'
+        shell: bash
+        working-directory: ${{ matrix.source }}
+        run: xcodebuild ARCHS=x86_64 -project AudioPluginDemo.xcodeproj -configuration Release -jobs 4
+
+      - name: Build Windows plugin (Projucer)
+        if: matrix.os == 'windows-latest'
+        shell: bash
+        working-directory: ${{ matrix.source }}
+        run: msbuild.exe -v:normal AudioPluginDemo.sln
 
       - name: Install node (Projucer)
         uses: actions/setup-node@v1
