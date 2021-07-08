@@ -53,7 +53,7 @@ jobs:
             name: win
             generator: Visual Studio 16 2019
             source: ./src/AudioPluginDemo/Builds/VisualStudio2017
-            path: ./src/AudioPluginDemo/Builds/VisualStudio2017/build/Release
+            path: ./src/AudioPluginDemo/Builds/VisualStudio2017/x64/Debug/VST3
             projucer_source: ./jucesdk/extras/Projucer/Builds/VisualStudio2017
             projucer_bin: ../../jucesdk/extras/Projucer/Builds/VisualStudio2017/x64/Debug/App/Projucer.exe
             projucer_type: windows
