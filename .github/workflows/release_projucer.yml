@@ -72,7 +72,7 @@ jobs:
           sudo apt install libasound2-dev libcurl4-openssl-dev libx11-dev libxinerama-dev libxext-dev libfreetype6-dev libwebkit2gtk-4.0-dev libglu1-mesa-dev libjack-jackd2-dev
           sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 9
           sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 9
-          make -j4
+          make -j4 VERBOSE=1
 
       - name: Install macOS dependencies (Projucer)
         if: matrix.os == 'macos-latest'
@@ -101,19 +101,25 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         shell: bash
         working-directory: ${{ matrix.source }}
-        run: make -j4 CONFIG=Release
+        run: |
+          ls 
+          make -j4 VERBOSE=1 CONFIG=Release
 
       - name: Build macOS plugin (Projucer)
         if: matrix.os == 'macos-latest'
         shell: bash
         working-directory: ${{ matrix.source }}
-        run: xcodebuild ARCHS=x86_64 -project AudioPluginDemo.xcodeproj -configuration Release -jobs 4
+        run: |
+          ls
+          xcodebuild ARCHS=x86_64 -project AudioPluginDemo.xcodeproj -configuration Release -jobs 4
 
       - name: Build Windows plugin (Projucer)
         if: matrix.os == 'windows-latest'
         shell: bash
         working-directory: ${{ matrix.source }}
-        run: msbuild.exe -v:normal AudioPluginDemo.sln
+        run: |
+          ls
+          msbuild.exe -v:normal AudioPluginDemo.sln
 
       - name: Install node (Projucer)
         uses: actions/setup-node@v1
