@@ -167,6 +167,10 @@ jobs:
               }
             }
 
+      - name: List files (Projucer)
+        shell: bash
+        run: ls ${{ matrix.path }}
+
       - name: Upload metadata (Projucer)
         if: matrix.os == 'macos-latest'
         uses: actions/upload-release-asset@v1
