@@ -101,30 +101,28 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         shell: bash
         working-directory: ${{ matrix.source }}
-        run: |
-          ls 
-          make -j4 VERBOSE=1 CONFIG=Release
+        run: make -j4 VERBOSE=1 CONFIG=Release
 
       - name: Build macOS plugin (Projucer)
         if: matrix.os == 'macos-latest'
         shell: bash
         working-directory: ${{ matrix.source }}
-        run: |
-          ls
-          xcodebuild ARCHS=x86_64 -project AudioPluginDemo.xcodeproj -configuration Release -jobs 4
+        run: xcodebuild ARCHS=x86_64 -project AudioPluginDemo.xcodeproj -configuration Release -jobs 4
 
       - name: Build Windows plugin (Projucer)
         if: matrix.os == 'windows-latest'
         shell: bash
         working-directory: ${{ matrix.source }}
-        run: |
-          ls
-          msbuild.exe -v:normal AudioPluginDemo.sln
+        run: msbuild.exe -v:normal AudioPluginDemo.sln
 
       - name: Install node (Projucer)
         uses: actions/setup-node@v1
         with:
           node-version: '14'
+
+      - name: List files (Projucer)
+        shell: bash
+        run: ls ./src/AudioPluginDemo/Builds/
 
       - name: Metadata (Projucer)
         shell: bash
