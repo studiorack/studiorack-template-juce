@@ -121,8 +121,9 @@ jobs:
           node-version: '14'
 
       - name: List files (Projucer)
+        if: matrix.os == 'ubuntu-latest'
         shell: bash
-        run: ls ./src/AudioPluginDemo/Builds/
+        run: ls ./src/AudioPluginDemo/Builds/LinuxMakefile/build
 
       - name: Metadata (Projucer)
         shell: bash
