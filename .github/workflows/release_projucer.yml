@@ -37,7 +37,7 @@ jobs:
             name: linux
             generator: Unix Makefiles
             source: ./src/AudioPluginDemo/Builds/LinuxMakefile
-            path: ./src/AudioPluginDemo/Builds/LinuxMakefile/build/Release
+            path: ./src/AudioPluginDemo/Builds/LinuxMakefile/build
             projucer_source: ./jucesdk/extras/Projucer/Builds/LinuxMakefile
             projucer_bin: ../../jucesdk/extras/Projucer/Builds/LinuxMakefile/build/Projucer
             projucer_type: linux
@@ -119,11 +119,6 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: '14'
-
-      - name: List files (Projucer)
-        if: matrix.os == 'ubuntu-latest'
-        shell: bash
-        run: ls ./src/AudioPluginDemo/Builds/LinuxMakefile/build
 
       - name: Metadata (Projucer)
         shell: bash
