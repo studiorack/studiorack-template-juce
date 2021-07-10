@@ -38,21 +38,21 @@ jobs:
             generator: Unix Makefiles
             source: ./src/AudioPluginDemo/Builds/LinuxMakefile
             path: ./src/AudioPluginDemo/Builds/LinuxMakefile/build
-            projucer_bin: ../../JUCE/Projucer
+            projucer_bin: ./JUCE/Projucer
             projucer_type: linux
           - os: macos-latest
             name: mac
             generator: Xcode
             source: ./src/AudioPluginDemo/Builds/MacOSX
             path: ./src/AudioPluginDemo/Builds/MacOSX/build/Release
-            projucer_bin: ../../JUCE/Projucer.app/Contents/MacOS/Projucer
+            projucer_bin: ./JUCE/Projucer.app/Contents/MacOS/Projucer
             projucer_type: osx
           - os: windows-latest
             name: win
             generator: Visual Studio 16 2019
             source: ./src/AudioPluginDemo/Builds/VisualStudio2017
             path: ./src/AudioPluginDemo/Builds/VisualStudio2017/x64/Debug/VST3
-            projucer_bin: ../../JUCE/Projucer.exe
+            projucer_bin: ./JUCE/Projucer.exe
             projucer_type: windows
     steps:
       - name: Checkout code (Projucer)
