@@ -38,24 +38,21 @@ jobs:
             generator: Unix Makefiles
             source: ./src/AudioPluginDemo/Builds/LinuxMakefile
             path: ./src/AudioPluginDemo/Builds/LinuxMakefile/build
-            projucer_source: ./jucesdk/extras/Projucer/Builds/LinuxMakefile
-            projucer_bin: ../../jucesdk/extras/Projucer/Builds/LinuxMakefile/build/Projucer
+            projucer_bin: ../../JUCE/Projucer
             projucer_type: linux
           - os: macos-latest
             name: mac
             generator: Xcode
             source: ./src/AudioPluginDemo/Builds/MacOSX
             path: ./src/AudioPluginDemo/Builds/MacOSX/build/Release
-            projucer_source: ./jucesdk/extras/Projucer/Builds/MacOSX
-            projucer_bin: ../../jucesdk/extras/Projucer/Builds/MacOSX/build/Debug/Projucer.app/Contents/MacOS/Projucer
+            projucer_bin: ../../JUCE/Projucer.app/Contents/MacOS/Projucer
             projucer_type: osx
           - os: windows-latest
             name: win
             generator: Visual Studio 16 2019
             source: ./src/AudioPluginDemo/Builds/VisualStudio2017
             path: ./src/AudioPluginDemo/Builds/VisualStudio2017/x64/Debug/VST3
-            projucer_source: ./jucesdk/extras/Projucer/Builds/VisualStudio2017
-            projucer_bin: ../../jucesdk/extras/Projucer/Builds/VisualStudio2017/x64/Debug/App/Projucer.exe
+            projucer_bin: ../../JUCE/Projucer.exe
             projucer_type: windows
     steps:
       - name: Checkout code (Projucer)
@@ -66,36 +63,23 @@ jobs:
       - name: Install Linux dependencies (Projucer)
         if: matrix.os == 'ubuntu-latest'
         shell: bash
-        working-directory: ${{ matrix.projucer_source }}
-        run: |
-          sudo apt-get update
-          sudo apt install libasound2-dev libcurl4-openssl-dev libx11-dev libxinerama-dev libxext-dev libfreetype6-dev libwebkit2gtk-4.0-dev libglu1-mesa-dev libjack-jackd2-dev
-          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 9
-          sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 9
-          make -j4 VERBOSE=1
+        run: sudo apt-get update && sudo apt-get install cmake gcc "libstdc++6" libx11-xcb-dev libxcb-util-dev libxcb-cursor-dev libxcb-xkb-dev libxkbcommon-dev libxkbcommon-x11-dev libfontconfig1-dev libcairo2-dev libgtkmm-3.0-dev libsqlite3-dev libxcb-keysyms1-dev libasound2-dev
 
       - name: Install macOS dependencies (Projucer)
         if: matrix.os == 'macos-latest'
         shell: bash
-        working-directory: ${{ matrix.projucer_source }}
-        run: xcodebuild ARCHS=x86_64 -project Projucer.xcodeproj -jobs 4
+        run: brew install cmake
 
       - name: Install Windows dependencies (Projucer)
         if: matrix.os == 'windows-latest'
         uses: microsoft/setup-msbuild@v1.0.2
 
-      - name: Build Windows dependencies (Projucer)
-        if: matrix.os == 'windows-latest'
-        shell: bash
-        working-directory: ${{ matrix.projucer_source }}
-        run: msbuild.exe Projucer.sln
-
       - name: Build (Projucer)
         shell: bash
-        working-directory: ./src/AudioPluginDemo
         run: |
-          ${{ matrix.projucer_bin }} --set-global-search-path ${{ matrix.projucer_type }} defaultJuceModulePath ../../jucesdk/modules
-          ${{ matrix.projucer_bin }} --resave AudioPluginDemo.jucer
+          curl -L https://github.com/juce-framework/JUCE/releases/download/6.0.8/juce-6.0.8-${{ matrix.projucer_type }}.zip --output jucesdk.zip
+          unzip jucesdk.zip
+          ./JUCE/Projucer --resave ./src/AudioPluginDemo/AudioPluginDemo.jucer
 
       - name: Build Linux plugin (Projucer)
         if: matrix.os == 'ubuntu-latest'
