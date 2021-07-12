@@ -4,9 +4,13 @@
 Audio plugin starter template using JUCE framework to build binaries using:
 
 * Bash
-* CMake 3.4.x
+* CMake 3.15.x
 * JUCE 6.0.x
 
+This repo demonstrates two ways to build JUCE plugins:
+
+1. cmake: ./.github/workflows/release.yml
+2. Projucer ./.github/workflows/release_projucer.yml
 
 ## Installation
 
