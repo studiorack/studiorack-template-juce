@@ -34,6 +34,7 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
         include:
           - os: ubuntu-latest
+            arch: x86-64
             name: linux
             generator: Unix Makefiles
             source: ./src/AudioPluginDemo/Builds/LinuxMakefile
@@ -41,6 +42,7 @@ jobs:
             projucer_bin: ./JUCE/Projucer
             projucer_type: linux
           - os: macos-latest
+            arch: x86-64
             name: mac
             generator: Xcode
             source: ./src/AudioPluginDemo/Builds/MacOSX
@@ -48,6 +50,7 @@ jobs:
             projucer_bin: ./JUCE/Projucer.app/Contents/MacOS/Projucer
             projucer_type: osx
           - os: windows-latest
+            arch: x86-64
             name: win
             generator: Visual Studio 16 2019
             source: ./src/AudioPluginDemo/Builds/VisualStudio2017
