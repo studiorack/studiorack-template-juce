@@ -1,5 +1,5 @@
-# studiorack-plugin-juce
-![Release](https://github.com/studiorack/studiorack-plugin-juce/workflows/Release/badge.svg)
+# studiorack-template-juce
+![Release](https://github.com/studiorack/studiorack-template-juce/workflows/Release/badge.svg)
 
 Audio plugin starter template using JUCE framework to build binaries using:
 
