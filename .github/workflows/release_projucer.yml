@@ -9,9 +9,9 @@ on:
 jobs:
   create_release:
     name: Create release (Projucer)
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     outputs:
-      id: ${{ steps.draft_release.outputs.id }}
+      upload_id: ${{ steps.draft_release.outputs.id }}
       upload_url: ${{ steps.draft_release.outputs.upload_url }}
     steps:
       - name: Draft release (Projucer)
@@ -27,152 +27,18 @@ jobs:
   build_release:
     name: Build release (Projucer)
     needs: create_release
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        include:
-          - os: ubuntu-latest
-            arch: x86-64
-            name: linux
-            generator: Unix Makefiles
-            source: ./src/AudioPluginDemo/Builds/LinuxMakefile
-            path: ./src/AudioPluginDemo/Builds/LinuxMakefile/build
-            projucer_bin: ./JUCE/Projucer
-            projucer_type: linux
-          - os: macos-latest
-            arch: x86-64
-            name: mac
-            generator: Xcode
-            source: ./src/AudioPluginDemo/Builds/MacOSX
-            path: ./src/AudioPluginDemo/Builds/MacOSX/build/Release
-            projucer_bin: ./JUCE/Projucer.app/Contents/MacOS/Projucer
-            projucer_type: osx
-          - os: windows-latest
-            arch: x86-64
-            name: win
-            generator: Visual Studio 16 2019
-            source: ./src/AudioPluginDemo/Builds/VisualStudio2017
-            path: ./src/AudioPluginDemo/Builds/VisualStudio2017/x64/Debug/VST3
-            projucer_bin: ./JUCE/Projucer.exe
-            projucer_type: windows
+    uses: studiorack/studiorack-workflows/.github/workflows/projucer.yml@main
+    with:
+      release_id: ${{ needs.create_release.outputs.upload_id }}
+      release_url: ${{ needs.create_release.outputs.upload_url }}
+
+  publish_release:
+    name: Publish release (Projucer)
+    needs: [create_release, build_release]
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout code (Projucer)
-        uses: actions/checkout@v2
-        with:
-          submodules: recursive
-
-      - name: Install Linux dependencies (Projucer)
-        if: matrix.os == 'ubuntu-latest'
-        shell: bash
-        run: sudo apt-get update && sudo apt-get install libasound2-dev libcurl4-openssl-dev libx11-dev libxinerama-dev libxext-dev libfreetype6-dev libwebkit2gtk-4.0-dev libglu1-mesa-dev libjack-jackd2-dev
-
-      - name: Install macOS dependencies (Projucer)
-        if: matrix.os == 'macos-latest'
-        shell: bash
-        run: brew install cmake
-
-      - name: Install Windows dependencies (Projucer)
-        if: matrix.os == 'windows-latest'
-        uses: microsoft/setup-msbuild@v1.0.2
-
-      - name: Build (Projucer)
-        shell: bash
-        run: |
-          curl -L https://github.com/juce-framework/JUCE/releases/download/6.0.8/juce-6.0.8-${{ matrix.projucer_type }}.zip --output jucesdk.zip
-          unzip jucesdk.zip
-          ${{ matrix.projucer_bin }} --set-global-search-path ${{ matrix.projucer_type }} defaultJuceModulePath ./JUCE/modules
-          ${{ matrix.projucer_bin }} --resave ./src/AudioPluginDemo/AudioPluginDemo.jucer
-
-      - name: Build Linux plugin (Projucer)
-        if: matrix.os == 'ubuntu-latest'
-        shell: bash
-        working-directory: ${{ matrix.source }}
-        run: make -j4 VERBOSE=1 CONFIG=Release
-
-      - name: Build macOS plugin (Projucer)
-        if: matrix.os == 'macos-latest'
-        shell: bash
-        working-directory: ${{ matrix.source }}
-        run: xcodebuild ARCHS=x86_64 -project AudioPluginDemo.xcodeproj -configuration Release -jobs 4
-
-      - name: Build Windows plugin (Projucer)
-        if: matrix.os == 'windows-latest'
-        shell: bash
-        working-directory: ${{ matrix.source }}
-        run: msbuild.exe -v:normal AudioPluginDemo.sln
-
-      - name: Install node (Projucer)
-        uses: actions/setup-node@v1
-        with:
-          node-version: '14'
-
-      - name: Metadata (Projucer)
-        shell: bash
-        run: |
-          npm install @studiorack/cli -g
-          cp -v ./src/assets/* "${{ matrix.path }}"
-          mv "${{ matrix.path }}/AudioPluginDemo.vst3" "${{ matrix.path }}/audio-plugin-demo.vst3"
-          studiorack validate "${{ matrix.path }}/**/*.{vst,vst3}" --files --json --txt --zip --summary
-
-      - name: Upload (Projucer)
-        uses: actions/github-script@v3
-        with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
-          script: |
-            const path = require('path');
-            const fs = require('fs');
-            const release_id = '${{ needs.create_release.outputs.id }}';
-            for (let file of await fs.readdirSync('${{ matrix.path }}')) {
-              if (path.extname(file) === '.zip') {
-                console.log('upload zip', `${{ matrix.path }}/${file}`);
-                await github.repos.uploadReleaseAsset({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  release_id: release_id,
-                  name: `${path.basename(file, path.extname(file))}-${{ matrix.name }}.zip`,
-                  data: await fs.readFileSync(`${{ matrix.path }}/${file}`)
-                });
-                if ("${{ matrix.os }}" == 'macos-latest') {
-                  console.log('upload png', `${{ matrix.path }}/${path.basename(file, path.extname(file))}.png`);
-                  await github.repos.uploadReleaseAsset({
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    release_id: release_id,
-                    name: `${path.basename(file, path.extname(file))}.png`,
-                    data: await fs.readFileSync(`${{ matrix.path }}/${path.basename(file, path.extname(file))}.png`)
-                  });
-                  console.log('upload wav', `${{ matrix.path }}/${path.basename(file, path.extname(file))}.wav`);
-                  await github.repos.uploadReleaseAsset({
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    release_id: release_id,
-                    name: `${path.basename(file, path.extname(file))}.wav`,
-                    data: await fs.readFileSync(`${{ matrix.path }}/${path.basename(file, path.extname(file))}.wav`)
-                  });
-                }
-              }
-            }
-
-      - name: List files (Projucer)
-        shell: bash
-        run: ls ${{ matrix.path }}
-
-      - name: Upload metadata (Projucer)
-        if: matrix.os == 'macos-latest'
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ needs.create_release.outputs.upload_url }}
-          asset_path: ${{ matrix.path }}/plugins.json
-          asset_name: plugins.json
-          asset_content_type: application/json
-
-      - name: Publish release (Projucer)
-        if: matrix.os == 'windows-latest'
-        uses: eregon/publish-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          release_id: ${{ needs.create_release.outputs.id }}
+    - uses: eregon/publish-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        release_id: ${{ needs.create_release.outputs.upload_id }}
