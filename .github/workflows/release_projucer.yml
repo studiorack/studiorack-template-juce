@@ -27,7 +27,7 @@ jobs:
   build_release:
     name: Build release (Projucer)
     needs: create_release
-    uses: studiorack/studiorack-workflows/.github/workflows/juce.yml@main
+    uses: studiorack/studiorack-workflows/.github/workflows/projucer.yml@main
     with:
       release_id: ${{ needs.create_release.outputs.upload_id }}
       release_url: ${{ needs.create_release.outputs.upload_url }}
