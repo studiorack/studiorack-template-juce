@@ -61,7 +61,7 @@ Compile a development version of the plugin using:
       -DCMAKE_BUILD_TYPE=Debug \
       -DJUCE_BUILD_EXAMPLES=ON \
       -DJUCE_BUILD_EXTRAS=OFF \
-      -S ./jucesdk \
+      -S ./sdk \
       -B ./build
     cmake --build ./build --config Debug --target AudioPluginExample_All
 
@@ -76,7 +76,7 @@ Build the final plugin binaries using:
       -DCMAKE_BUILD_TYPE=Release \
       -DJUCE_BUILD_EXAMPLES=ON \
       -DJUCE_BUILD_EXTRAS=OFF \
-      -S ./jucesdk \
+      -S ./sdk \
       -B ./build
     cmake --build ./build --config Release --target AudioPluginExample_All
 
